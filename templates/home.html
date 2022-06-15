@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Reddit API</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+		integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<style>
+	* {
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+	}
+
+	a {
+		text-decoration: none;
+		color: unset;
+	}
+
+	body {
+		display: flex;
+		flex-direction: column;
+		min-height: 100vh;
+	}
+
+	.image-container {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+		margin: 40px 80px;
+		place-items: center;
+		grid-gap: 30px;
+	}
+
+	@media screen and (max-width: 1000px) {
+		.image-container {
+			margin: 40px 20px;
+
+		}
+	}
+
+	.image-container img {
+		height: 270px;
+		width: 270px;
+		border-radius: 10px;
+		object-fit: cover;
+		overflow: hidden;
+		box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3),
+			0 0 3px rgba(0, 0, 0, 0.5);
+		cursor: pointer;
+		position: relative;
+	}
+
+	.topbar {
+		padding: 20px 20px;
+		box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+		font-size: 25px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-weight: 700;
+		font-family: cursive;
+	}
+
+	.topbar span {
+		letter-spacing: 1.3px;
+	}
+
+	.topbar span:first-child {
+		color: red;
+	}
+
+	.too-many-request {
+		margin: auto;
+		font-size: 30px;
+		font-weight: 800;
+		font-family: cursive;
+	}
+
+	.footer {
+		background: black;
+		box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+		padding: 40px 80px;
+		font-size: 20px;
+		color: white;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		margin-top: auto;
+	}
+
+	.footer .developer {
+		font-size: 17px;
+		color: gray;
+	}
+
+	.footer .icons {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		color: white;
+		margin-bottom: 20px;
+		margin-left: 20px;
+	}
+
+	.footer .icons a {
+		cursor: pointer;
+		margin-right: 20px;
+		font-size: 30px;
+		transition: 0.2s all;
+	}
+
+	.footer .icons a:hover {
+		transform: translateY(-5px);
+	}
+
+	#cursor {
+		width: 40px;
+		height: 40px;
+		border: 2px solid black;
+		border-radius: 50%;
+		position: absolute;
+		transform: translate(-50%, -50%);
+		transform-origin: center;
+		pointer-events: none;
+		transition: all 0.3s ease-out;
+		transition-property: background, transform, width, height;
+		z-index: 5;
+	}
+
+	#cursor.on-image {
+		width: 90px;
+		height: 90px;
+		backdrop-filter: grayscale();
+	}
+</style>
+
+<body>
+	<div class="topbar"><span>Reddit</span><span>Image</span></div>
+	<div id="cursor"></div>
+	{% if urls == "wait" %}
+	<div class="too-many-request">Too many request, retry a bit later</div>
+	{% endif %}
+	{% if urls == "limit exceeded" %}
+	<div class="too-many-request">API didn't respond, Max limit reached, retry a bit later</div>
+	{% endif %}
+	{% if urls != "wait" and urls != "limit exceeded" %}
+	<div class="image-container">
+		{% for url in urls %}
+		<img class="reddit-image" src="{{url}}" alt="">
+		{% endfor %}
+	</div>
+	{% endif %}
+
+
+	<div class='footer'>
+		<div class='icons'>
+			<a class="icon" href="https://github.com/NomanKhan3701" target="_blank">
+				<i class="fa-brands fa-github"></i></a>
+			<a class="icon" href="https://www.linkedin.com/in/noman-khan-0450b5203" target="_blank">
+				<i class="fa-brands fa-linkedin"></i></a>
+		</div>
+		<div class='developer'>
+			© 2022 noman.khan3701@gmail.com
+		</div>
+	</div>
+</body>
+<script>
+	const mouseCursor = document.querySelector('#cursor');
+	const redditImages = document.querySelectorAll(".reddit-image");
+	const footer = document.querySelector(".footer");
+	window.addEventListener('mousemove', (e) => {
+		mouseCursor.style.top = e.pageY + "px";
+		mouseCursor.style.left = e.pageX + "px";
+	})
+
+	redditImages.forEach(image => {
+		image.addEventListener("mouseover", () => {
+			mouseCursor.classList.add("on-image");
+		})
+		image.addEventListener("mouseleave", () => {
+			mouseCursor.classList.remove("on-image");
+		})
+	})
+
+	footer.addEventListener("mouseover", () => {
+		mouseCursor.style.border = "2px solid white"
+	})
+	footer.addEventListener("mouseleave", () => {
+		mouseCursor.style.border = "2px solid black"
+	})
+</script>
+
+</html>
